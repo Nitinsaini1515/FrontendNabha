@@ -131,7 +131,13 @@ export default function PharmacyDashboard() {
         const storedUser = localStorage.getItem('user')
         if (storedUser) {
           const userData = JSON.parse(storedUser)
-          setPharmacy(prev => ({ ...prev, ...userData }))
+          const normalized = {
+            ...userData,
+            name: userData.name || userData.pharmacyName || prev?.name || "Pharmacy",
+            location: userData.location || userData.pharmacyAddress || "",
+            license: userData.license || userData.licenseNumber || "",
+          }
+          setPharmacy(prev => ({ ...prev, ...normalized }))
         }
 
         // Try to get updated pharmacy data from API (mock returns { profile })
@@ -139,9 +145,15 @@ export default function PharmacyDashboard() {
           const profileResponse = await api.getPharmacyProfile(token)
           if (profileResponse.success && profileResponse.data?.profile) {
             const profile = profileResponse.data.profile
-            setPharmacy(prev => ({ ...prev, ...profile }))
+            const normalized = {
+              ...profile,
+              name: profile.name || profile.pharmacyName || "Pharmacy",
+              location: profile.location || profile.pharmacyAddress || "",
+              license: profile.license || profile.licenseNumber || "",
+            }
+            setPharmacy(prev => ({ ...prev, ...normalized }))
             // Update localStorage with fresh data
-            localStorage.setItem('user', JSON.stringify(profile))
+            localStorage.setItem('user', JSON.stringify(normalized))
           }
         } catch (profileError) {
           console.log('Using cached pharmacy data:', profileError?.message || profileError)
