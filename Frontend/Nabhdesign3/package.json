@@ -2,12 +2,13 @@
   "name": "my-v0-project",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "build": "set NEXT_DISABLE_SWC_NATIVE=1&& set NEXT_TELEMETRY_DISABLED=1&& next build",
-    "dev": "set NEXT_DISABLE_SWC_NATIVE=1&& set NEXT_TELEMETRY_DISABLED=1&& next dev",
-    "lint": "next lint",
-    "start": "set NEXT_DISABLE_SWC_NATIVE=1&& set NEXT_TELEMETRY_DISABLED=1&& next start"
-  },
+ "scripts": {
+  "build": "NEXT_DISABLE_SWC_NATIVE=1 NEXT_TELEMETRY_DISABLED=1 next build",
+  "dev": "NEXT_DISABLE_SWC_NATIVE=1 NEXT_TELEMETRY_DISABLED=1 next dev",
+  "start": "NEXT_DISABLE_SWC_NATIVE=1 NEXT_TELEMETRY_DISABLED=1 next start",
+  "lint": "next lint"
+}
+
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "1.2.2",
