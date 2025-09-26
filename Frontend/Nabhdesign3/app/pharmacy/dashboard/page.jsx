@@ -164,12 +164,26 @@ export default function PharmacyDashboard() {
           const ordersResponse = await api.getPharmacyOrders(token)
           if (ordersResponse.success) {
             const apiOrders = ordersResponse.data?.orders || []
-            setOrders(apiOrders)
-            // Calculate stats from orders
+            // Normalize orders so missing fields from mock data don't crash UI
+            const normalizedOrders = apiOrders.map((o) => ({
+              id: String(o.id ?? ""),
+              patientName: o.patientName || "Patient",
+              doctorName: o.doctorName || "",
+              prescriptionDate: o.prescriptionDate || "",
+              orderTime: o.orderTime || "",
+              status: o.status || "pending",
+              priority: o.priority || "medium",
+              medications: Array.isArray(o.medications) ? o.medications : [],
+              totalAmount: o.totalAmount || o.total || 0,
+              patientPhone: o.patientPhone || "",
+              deliveryType: o.deliveryType || "pickup",
+            }))
+            setOrders(normalizedOrders)
+            // Calculate stats from normalized orders
             const stats = {
-              totalOrders: apiOrders.length,
-              pending: apiOrders.filter(order => order.status === 'pending').length,
-              completed: apiOrders.filter(order => order.status === 'completed').length,
+              totalOrders: normalizedOrders.length,
+              pending: normalizedOrders.filter(order => order.status === 'pending').length,
+              completed: normalizedOrders.filter(order => order.status === 'completed').length,
             }
             setTodayStats(stats)
           }
@@ -215,9 +229,10 @@ export default function PharmacyDashboard() {
   }
 
   const filteredOrders = orders.filter((order) => {
-    const matchesSearch =
-      order.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.id.toLowerCase().includes(searchTerm.toLowerCase())
+    const name = (order.patientName || "").toLowerCase()
+    const idStr = String(order.id || "").toLowerCase()
+    const term = searchTerm.toLowerCase()
+    const matchesSearch = name.includes(term) || idStr.includes(term)
     const matchesStatus = statusFilter === "all" || order.status === statusFilter
     return matchesSearch && matchesStatus
   })
