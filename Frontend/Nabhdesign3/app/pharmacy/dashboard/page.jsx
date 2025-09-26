@@ -134,34 +134,35 @@ export default function PharmacyDashboard() {
           setPharmacy(prev => ({ ...prev, ...userData }))
         }
 
-        // Try to get updated pharmacy data from API
+        // Try to get updated pharmacy data from API (mock returns { profile })
         try {
           const profileResponse = await api.getPharmacyProfile(token)
-          if (profileResponse.success && profileResponse.data.pharmacy) {
-            setPharmacy(profileResponse.data.pharmacy)
+          if (profileResponse.success && profileResponse.data?.profile) {
+            const profile = profileResponse.data.profile
+            setPharmacy(prev => ({ ...prev, ...profile }))
             // Update localStorage with fresh data
-            localStorage.setItem('user', JSON.stringify(profileResponse.data.pharmacy))
+            localStorage.setItem('user', JSON.stringify(profile))
           }
         } catch (profileError) {
-          console.log('Using cached pharmacy data:', profileError.message)
+          console.log('Using cached pharmacy data:', profileError?.message || profileError)
         }
 
         // Load orders from API
         try {
           const ordersResponse = await api.getPharmacyOrders(token)
           if (ordersResponse.success) {
-            setOrders(ordersResponse.data.orders || [])
+            const apiOrders = ordersResponse.data?.orders || []
+            setOrders(apiOrders)
             // Calculate stats from orders
-            const orders = ordersResponse.data.orders || []
             const stats = {
-              totalOrders: orders.length,
-              pending: orders.filter(order => order.status === 'pending').length,
-              completed: orders.filter(order => order.status === 'completed').length,
+              totalOrders: apiOrders.length,
+              pending: apiOrders.filter(order => order.status === 'pending').length,
+              completed: apiOrders.filter(order => order.status === 'completed').length,
             }
             setTodayStats(stats)
           }
         } catch (ordersError) {
-          console.log('Using fallback order data:', ordersError.message)
+          console.log('Using fallback order data:', ordersError?.message || ordersError)
         }
       } catch (error) {
         console.error('Error loading dashboard data:', error)
