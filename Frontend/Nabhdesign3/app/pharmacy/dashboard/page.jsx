@@ -131,13 +131,13 @@ export default function PharmacyDashboard() {
         const storedUser = localStorage.getItem('user')
         if (storedUser) {
           const userData = JSON.parse(storedUser)
-          const normalized = {
+          setPharmacy(prev => ({
+            ...prev,
             ...userData,
             name: userData.name || userData.pharmacyName || prev?.name || "Pharmacy",
-            location: userData.location || userData.pharmacyAddress || "",
-            license: userData.license || userData.licenseNumber || "",
-          }
-          setPharmacy(prev => ({ ...prev, ...normalized }))
+            location: userData.location || userData.pharmacyAddress || prev?.location || "",
+            license: userData.license || userData.licenseNumber || prev?.license || "",
+          }))
         }
 
         // Try to get updated pharmacy data from API (mock returns { profile })
@@ -337,13 +337,13 @@ export default function PharmacyDashboard() {
                       <div className="flex items-start justify-between mb-3">
                         <div>
                           <div className="flex items-center space-x-2 mb-1">
-                            <h4 className="font-semibold">{order.medications[0]?.name || t("medicine_name")}</h4>
+                            <h4 className="font-semibold">{order.medications?.[0]?.name || t("medicine_name")}</h4>
                             <Badge className={getPriorityColor(order.priority)}>
                               {t(`priority_${order.priority}`)}
                             </Badge>
                           </div>
                           <p className="text-sm text-muted-foreground">
-                            {t("stock")}: {order.medications[0]?.quantity || 0} {t("units")}
+                            {t("stock")}: {order.medications?.[0]?.quantity || 0} {t("units")}
                           </p>
                           <p className="text-sm text-muted-foreground">
                             {t("last_updated")}: {order.orderTime}
