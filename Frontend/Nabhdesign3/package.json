@@ -2,13 +2,13 @@
   "name": "my-v0-project",
   "version": "0.1.0",
   "private": true,
- "scripts": {
+"scripts": {
   "build": "cross-env NEXT_DISABLE_SWC_NATIVE=1 NEXT_TELEMETRY_DISABLED=1 next build",
-  "export": "next export",
   "dev": "cross-env NEXT_DISABLE_SWC_NATIVE=1 NEXT_TELEMETRY_DISABLED=1 next dev",
   "start": "cross-env NEXT_DISABLE_SWC_NATIVE=1 NEXT_TELEMETRY_DISABLED=1 next start",
   "lint": "next lint"
 },
+
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "1.2.2",
